@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Editoriales</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            font-size: 1.25rem;
+        }
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .search-bar {
+            max-width: 400px;
+            margin-bottom: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .actions-column {
+            width: 250px;
+            text-align: center;
+        }
+        .name-column {
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <div class="container d-flex justify-content-center">
+            <a class="navbar-brand" href="#">Bibliópolis</a>
+            <div class="navbar-nav">
+                <a href="/usuarios" class="btn btn-outline-primary me-2">Usuarios</a>
+                <a href="/prestamos" class="btn btn-outline-primary me-2">Préstamos</a>
+                <a href="/categorias" class="btn btn-outline-primary me-2">Categorías</a>
+                <a href="/editoriales" class="btn btn-secondary me-2 disabled">Editoriales</a>
+                <a href="/libros" class="btn btn-outline-primary me-5">Libros</a>
+                <a href="/" class="btn btn-primary ms-auto me-5">Inicio</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-4">
+        <!-- Card para la gestión de editoriales -->
+        <div class="card">
+            <div class="card-header">
+                <h2>Lista de Editoriales</h2>
+            </div>
+            <div class="card-body">
+                <!-- Botón para agregar nueva editorial -->
+                <div class="d-flex justify-content-between mb-4">
+                    <a href="/editoriales/nueva" class="btn btn-success">
+                        <i class="fas fa-plus-circle"></i> Nueva Editorial
+                    </a>
+                </div>
+
+                <!-- Tabla de editoriales -->
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="name-column">Nombre de la Editorial</th>
+                            <th class="actions-column">Eliminar editorial</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="editorial : ${editoriales}">
+                            <td th:text="${editorial.nombre}"></td>
+                            <td class="actions-column">
+                                <button type="button" class="btn btn-danger btn-sm" 
+                                    onclick="confirmDelete(this)" 
+                                    th:data-url="@{/editoriales/eliminar/{id}(id=${editorial.id})}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventana modal de confirmación -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar esta editorial?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteForm" method="post">
+                        <input type="hidden" name="_method" value="delete"/>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(button) {
+            let form = document.getElementById('deleteForm');
+            let url = button.getAttribute('data-url');
+            form.setAttribute('action', url);
+            let modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            modal.show();
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
